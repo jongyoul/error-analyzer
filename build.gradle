@@ -1,0 +1,23 @@
+plugins {
+    id 'com.google.cloud.tools.jib' version '3.4.0' apply false
+}
+
+version = '0.1-SNAPSHOT'
+
+subprojects.each { subproject ->
+    def subprojectName = rootProject.projectDir.relativePath(subproject.projectDir)
+
+    subproject.afterEvaluate {
+        ['run', 'publish'].each { targetTaskName ->
+            def taskName = "${targetTaskName}${subprojectName.capitalize()}"
+            def taskDescription = "${targetTaskName.capitalize()} the module of ${subprojectName}"
+            if (subproject.tasks.findByName(targetTaskName)) {
+                tasks.register(taskName) {
+                    description = taskDescription
+                    group = 'verification'
+                    dependsOn subproject.tasks.named(targetTaskName)
+                }
+            }
+        }
+    }
+}
