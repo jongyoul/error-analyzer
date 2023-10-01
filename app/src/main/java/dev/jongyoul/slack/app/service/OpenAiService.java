@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import dev.jongyoul.slack.app.model.OpenAiRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
@@ -31,7 +32,14 @@ public class OpenAiService {
     private final OkHttpClient okHttpClient;
     private final Gson gson;
 
-    public void call(Object requestBody,
+    /**
+     * It uses okHttpClient and it supports Callback with two methods including `onResponse` and `onFailure`.
+     * `onSuccess` is for handling with `onResponse`
+     * @param requestBody has prompt and OpenAI-related configurations
+     * @param onSuccess handles the content of the response of OpenAI call
+     * @param onFailure is called when API occurs error
+     */
+    public void call(OpenAiRequest requestBody,
                      Consumer<String> onSuccess,
                      Consumer<Exception> onFailure) {
         Request request = new Request.Builder()
@@ -47,6 +55,8 @@ public class OpenAiService {
                     final JsonElement jsonElement =
                             JsonParser.parseReader(Objects.requireNonNull(response.body()).charStream());
                     final JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    // It follows the specification of the response of OpenAI API
+                    // It chooses the first answer
                     final String content = jsonObject
                             .get("choices").getAsJsonArray()
                             .get(0).getAsJsonObject()
@@ -65,5 +75,4 @@ public class OpenAiService {
             }
         });
     }
-
 }

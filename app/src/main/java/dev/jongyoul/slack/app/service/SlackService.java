@@ -55,6 +55,7 @@ public class SlackService {
 
     private void call(OpenAiRequest openAiRequest, EventContext context, String channel, String timestamp) {
         reactionService.getReactions(context, channel, timestamp).thenAccept(reactions -> {
+            // If there are any reaction related to handling messages, it will skip handling
             if (reactions.contains(EXCLAMATION_REACTION_KEY)
                 || reactions.contains(WHITE_CHECK_MARK_REACTION_KEY)
                 || reactions.contains(THINKING_FACE_REACTION_KEY)) {

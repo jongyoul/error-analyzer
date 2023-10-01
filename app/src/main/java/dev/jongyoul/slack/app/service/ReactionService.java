@@ -31,6 +31,8 @@ public class ReactionService {
                               .timestamp(timestamp))
                       .thenApplyAsync(reactionsGetResponse -> {
                           List<Reaction> reactions = reactionsGetResponse.getMessage().getReactions();
+                          // If there's no reaction, the rest of logic wouldn't be executed
+                          // The caller, however, checks if it's empty or not. Thus, it returns empty list if it's null
                           if (reactions == null) {
                               reactions = Collections.emptyList();
                           }
