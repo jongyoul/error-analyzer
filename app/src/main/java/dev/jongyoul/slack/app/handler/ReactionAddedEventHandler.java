@@ -42,6 +42,9 @@ public class ReactionAddedEventHandler implements BoltEventHandler<ReactionAdded
                            final String question = conversationsHistoryResponse.getMessages().get(0).getText();
                            slackService.ask(question, context, channel, timestamp);
                        }).exceptionallyAsync(throwable -> {
+                           // The above `exceptionallyAsync` can cause test failure
+                           // because the inner logic would be executed asynchronously
+                           // Because of this reason, Verifying by mockito can be failed.
                            log.error("Error while getting the original text", throwable);
                            reactionService.addReaction(context, channel, timestamp, EXCLAMATION_REACTION_KEY);
                            return null;
