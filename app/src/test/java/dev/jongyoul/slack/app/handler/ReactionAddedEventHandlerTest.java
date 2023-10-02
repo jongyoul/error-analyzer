@@ -72,7 +72,7 @@ class ReactionAddedEventHandlerTest {
         final String testItemTimestamp = "testItemTimestamp";
         final String testResultText = "testResultText";
         final Response response = Response.ok();
-        final ExecutorService executorService = Executors.newSingleThreadExecutor();
+        final ExecutorService executorService = Executors.newCachedThreadPool();
         when(event.getEvent()).thenReturn(reactionAddedEvent);
         when(reactionAddedEvent.getReaction()).thenReturn(testReactionName);
         when(reactionAddedEvent.getItem()).thenReturn(item);
@@ -102,7 +102,7 @@ class ReactionAddedEventHandlerTest {
         final String testItemChannel = "testItemChannel";
         final String testItemTimestamp = "testItemTimestamp";
         final Response response = Response.ok();
-        final ExecutorService executorService = Executors.newSingleThreadExecutor();
+        final ExecutorService executorService = Executors.newCachedThreadPool();
         final CompletableFuture<ConversationsHistoryRequest> completableFuture = CompletableFuture
                 .supplyAsync(() -> {
                     throw new RuntimeException();
