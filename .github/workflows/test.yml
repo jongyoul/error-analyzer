@@ -14,5 +14,6 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
+          distribution: 'adopt'
       - name: Test with Gradle
         run: ./gradlew check
