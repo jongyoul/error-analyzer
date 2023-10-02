@@ -2,6 +2,8 @@ package dev.jongyoul.slack.app;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.gson.Gson;
 import com.slack.api.bolt.App;
@@ -15,7 +17,7 @@ import com.slack.api.model.event.ReactionAddedEvent;
 import dev.jongyoul.slack.app.handler.AppMentionEventHandler;
 import dev.jongyoul.slack.app.handler.MessageBotEventHandler;
 import dev.jongyoul.slack.app.handler.MessageEventHandler;
-import dev.jongyoul.slack.app.handler.ReactionAddedHandler;
+import dev.jongyoul.slack.app.handler.ReactionAddedEventHandler;
 import dev.jongyoul.slack.app.handler.SlashCommandHandler;
 import dev.jongyoul.slack.app.service.OpenAiService;
 import dev.jongyoul.slack.app.service.ReactionService;
@@ -40,11 +42,12 @@ public class ErrorAnalyzer {
                 new OkHttpClient.Builder().readTimeout(Duration.ofSeconds(HTTP_READ_TIMEOUT)).build();
         final ReactionService reactionService = new ReactionService();
         final OpenAiService openAiService = new OpenAiService(apiToken, okHttpClient, gson);
+        final ExecutorService executorService = Executors.newCachedThreadPool();
         final SlackService slackService =
                 new SlackService(reactionService, openAiService);
         final AppMentionEventHandler appMentionEventHandler = new AppMentionEventHandler(slackService);
-        final ReactionAddedHandler reactionAddedHandler =
-                new ReactionAddedHandler(reactionService, slackService);
+        final ReactionAddedEventHandler reactionAddedEventHandler =
+                new ReactionAddedEventHandler(reactionService, slackService, executorService);
         final MessageEventHandler messageEventHandler = new MessageEventHandler(slackService);
         final MessageBotEventHandler messageBotEventHandler = new MessageBotEventHandler(slackService);
         final SlashCommandHandler slashCommandHandler = new SlashCommandHandler(slackService);
@@ -55,7 +58,7 @@ public class ErrorAnalyzer {
                                              .build();
         final App app = new App(appConfig);
         app.event(AppMentionEvent.class, appMentionEventHandler);
-        app.event(ReactionAddedEvent.class, reactionAddedHandler);
+        app.event(ReactionAddedEvent.class, reactionAddedEventHandler);
         app.event(MessageEvent.class, messageEventHandler);
         app.event(MessageBotEvent.class, messageBotEventHandler);
         app.command(ERROR_ANALYZER_COMMAND, slashCommandHandler);

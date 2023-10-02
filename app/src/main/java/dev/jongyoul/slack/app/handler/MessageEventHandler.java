@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageEventHandler implements BoltEventHandler<MessageEvent> {
     private static final Pattern MENTION = Pattern.compile("@\\w+");
+
     private final SlackService slackService;
 
     @Override

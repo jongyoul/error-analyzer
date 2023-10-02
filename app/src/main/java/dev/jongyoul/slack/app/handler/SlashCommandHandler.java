@@ -11,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
-public class SlashCommandHandler
-        implements com.slack.api.bolt.handler.builtin.SlashCommandHandler {
+public class SlashCommandHandler implements com.slack.api.bolt.handler.builtin.SlashCommandHandler {
     private static final String GEN_ERROR_KEY = "gen-error";
+
     private final SlackService slackService;
 
     @Override
@@ -21,10 +21,10 @@ public class SlashCommandHandler
         final SlashCommandPayload slashCommandPayload = slashCommandRequest.getPayload();
         final String channel = slashCommandPayload.getChannelId();
         final String text = slashCommandPayload.getText();
-        if (GEN_ERROR_KEY.equals(text)) {
-            slackService.generateError(context, channel);
-        } else {
-            log.warn("wrong command");
+        //noinspection SwitchStatementWithTooFewBranches
+        switch (text) {
+            case GEN_ERROR_KEY -> slackService.generateError(context, channel);
+            default -> log.warn("wrong command");
         }
         return context.ack();
     }
