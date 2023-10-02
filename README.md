@@ -1,14 +1,19 @@
 # Error Analyzer
 
-This project will analyze error message published in Slack channels
+## Overview 
 
-# Overview 
+This Slack app sends error messages and receives answers analyzed by OpenAI, and sends the result to the channel as threaded messages.
 
-TBD
+## How to Run
 
-# How to build
+### Prerequisites
+- Java 17
+- direnv
+- OpenAI API key
+- Slack API token
+- Slack Bot token
 
-## Local
+### Setup and Run
 ```bash
 # Copy .envrc.template to .envrc and edit the file
 cp .envrc.template .envrc
@@ -19,16 +24,7 @@ cp .envrc.template .envrc
 ./gradlew runApp
 ```
 
-## (WIP) Publish
-```bash
-# Copy .envrc.template to .envrc and edit the file
-cp .envrc.template .envrc
-
-# Source .envrc. You can skip it if you use `direnv`
-. .envrc
-
-./gradlew publishApp
-```
-
 ## Usage
-TBD
+- Send a message to the channel where the app is installed
+- Send a message mentioning the bot id in the channel where the app is installed
+- Add 🔁 reaction to the message if it's not analyzed yet
